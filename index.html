@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0b1220">
+  <title>Mon panneau de contrôle</title>
+  <style>
+    :root { color-scheme: dark; font-family: -apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",sans-serif; }
+    * { box-sizing: border-box; }
+    html, body { margin:0; width:100%; height:100%; overscroll-behavior:none; }
+    body { min-height:100svh; background:#0b1220; color:white; }
+    main { height:100svh; min-height:360px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:repeat(2,minmax(0,1fr)); gap:clamp(12px,1.8vw,24px); padding:calc(env(safe-area-inset-top) + clamp(14px,2vw,28px)) calc(env(safe-area-inset-right) + clamp(14px,2vw,28px)) calc(env(safe-area-inset-bottom) + clamp(14px,2vw,28px)) calc(env(safe-area-inset-left) + clamp(14px,2vw,28px)); }
+    .tile { position:relative; border:0; border-radius:clamp(22px,3vw,38px); color:#fff; text-align:left; padding:clamp(22px,4vw,58px); display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; text-decoration:none; box-shadow:inset 0 1px 1px #ffffff55, 0 15px 35px #00000022; -webkit-tap-highlight-color:transparent; transition:transform .12s ease, filter .12s ease; cursor:pointer; }
+    .tile:active {transform:scale(.975); filter:brightness(.93)}
+    .tile:focus-visible {outline:4px solid white;outline-offset:4px}
+    .strava {background:linear-gradient(135deg,#ff9679 0%,#ff7567 100%)}
+    .metro {background:linear-gradient(135deg,#ffcb35 0%,#ffae00 100%)}
+    .meteo {background:linear-gradient(135deg,#45a3ff 0%,#0577f5 100%)}
+    .gaming {background:linear-gradient(135deg,#28d5ad 0%,#00bda0 100%)}
+    .icon {width:clamp(46px,6.4vw,92px);height:clamp(46px,6.4vw,92px);stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 3px 5px #00000012)}
+    .title {font-size:clamp(29px,4.6vw,70px);font-weight:650;letter-spacing:-.035em;line-height:1.06}
+    .subtitle {font-size:clamp(13px,1.55vw,23px);font-weight:450;opacity:.87;margin-top:12px}
+    .shine {position:absolute;right:-8%;top:-40%;width:65%;height:130%;transform:rotate(35deg);background:linear-gradient(90deg,transparent,#ffffff18,transparent);pointer-events:none}
+    @media (max-width:550px) and (orientation:portrait) { .tile{padding:22px}.title{font-size:clamp(24px,7vw,42px)}.subtitle{font-size:13px}.icon{width:48px;height:48px} }
+    @media (prefers-reduced-motion: reduce) {.tile{transition:none}}
+  </style>
+</head>
+<body>
+<main aria-label="Tableau de bord Apple">
+  <a class="tile strava" data-shortcut="Strava" href="shortcuts://run-shortcut?name=Strava" aria-label="Lancer le raccourci Strava">
+    <span class="shine"></span>
+    <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="8" width="38" height="32" rx="5"/><circle cx="17" cy="19" r="3"/><path d="m9 35 11-11 7 7 6-6 7 9"/></svg>
+    <div><div class="title">Strava</div><div class="subtitle">Mes statistiques sportives</div></div>
+  </a>
+  <a class="tile metro" data-shortcut="Métros" href="shortcuts://run-shortcut?name=M%C3%A9tros" aria-label="Lancer le raccourci Métros">
+    <span class="shine"></span>
+    <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="4" width="28" height="32" rx="7"/><path d="M10 14h28M15 36l-5 8m23-8 5 8M16 29h4m8 0h4"/><path d="M17 9h14"/></svg>
+    <div><div class="title">Métros</div><div class="subtitle">Prochains passages</div></div>
+  </a>
+  <a class="tile meteo" data-shortcut="Météo" href="shortcuts://run-shortcut?name=M%C3%A9t%C3%A9o" aria-label="Lancer le raccourci Météo">
+    <span class="shine"></span>
+    <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M20 8v20a9 9 0 1 0 8 0V8a4 4 0 0 0-8 0Z"/><path d="M24 15v17m-11-22-3-3m3 11H7m32-8 3-3m-3 11h4"/><path d="M18 38a6 6 0 0 0 12 0"/></svg>
+    <div><div class="title">Météo</div><div class="subtitle">Prévisions du jour</div></div>
+  </a>
+  <a class="tile gaming" data-shortcut="PlayStation" href="shortcuts://run-shortcut?name=PlayStation" aria-label="Lancer le raccourci PlayStation">
+    <span class="shine"></span>
+    <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M16 15h16c5 0 8 3 10 10l2 9c1 6-4 9-8 5l-6-6H18l-6 6c-4 4-9 1-8-5l2-9c2-7 5-10 10-10Z"/><path d="M15 22v10m-5-5h10"/><circle cx="32" cy="23" r="1.6" fill="currentColor" stroke="none"/><circle cx="37" cy="28" r="1.6" fill="currentColor" stroke="none"/></svg>
+    <div><div class="title">PlayStation</div><div class="subtitle">Allumer le PC gaming</div></div>
+  </a>
+</main>
+<script>
+  // Les noms ci-dessous doivent correspondre EXACTEMENT aux raccourcis de l'iPad.
+  // Le schéma d'URL shortcuts:// est officiellement documenté par Apple.
+  document.querySelectorAll('[data-shortcut]').forEach(tile => {
+    tile.href = 'shortcuts://run-shortcut?name=' + encodeURIComponent(tile.dataset.shortcut);
+  });
+</script>
+</body>
+</html>
