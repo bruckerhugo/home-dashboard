@@ -26,6 +26,143 @@
     .shine {position:absolute;right:-8%;top:-40%;width:65%;height:130%;transform:rotate(35deg);background:linear-gradient(90deg,transparent,#ffffff18,transparent);pointer-events:none}
     @media (max-width:550px) and (orientation:portrait) { .tile{padding:22px}.title{font-size:clamp(24px,7vw,42px)}.subtitle{font-size:13px}.icon{width:48px;height:48px} }
     @media (prefers-reduced-motion: reduce) {.tile{transition:none}}
+    
+/* Page des horaires de métro */
+#metro-page {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: #0b1220;
+  color: white;
+  padding:
+    calc(env(safe-area-inset-top) + 20px)
+    24px
+    calc(env(safe-area-inset-bottom) + 16px);
+  overflow-y: auto;
+}
+
+#metro-page[hidden] {
+  display: none;
+}
+
+.metro-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.metro-header h1 {
+  font-size: clamp(23px, 3vw, 40px);
+  margin: 0;
+}
+
+#metro-back {
+  background: #25354e;
+  color: white;
+  border: 0;
+  border-radius: 14px;
+  padding: 14px 20px;
+  font: inherit;
+  cursor: pointer;
+}
+
+#metro-updated {
+  color: #a5b5c9;
+  font-size: 13px;
+}
+
+.metro-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.metro-panel {
+  background: #17263b;
+  border: 1px solid #32425a;
+  border-radius: 25px;
+  padding: 25px;
+  min-width: 0;
+}
+
+.metro-station {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 25px;
+}
+
+.metro-station h2 {
+  font-size: clamp(18px, 2vw, 28px);
+  margin: 0;
+}
+
+.metro-line {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 13px;
+  color: #172033;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.line8 { background: #C5A3D4; }
+.line10 { background: #E3B32A; }
+
+.metro-direction {
+  border-top: 1px solid #394a61;
+  padding: 18px 0;
+}
+
+.metro-direction h3 {
+  margin: 0 0 14px;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.metro-times {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.metro-time {
+  background: #30445f;
+  border-radius: 12px;
+  padding: 13px 17px;
+  font-size: 22px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.metro-time:first-child {
+  background: #245c50;
+  color: #a0f3c9;
+}
+
+.metro-empty {
+  color: #a5b5c9;
+  font-size: 15px;
+}
+
+.metro-source {
+  color: #8194ad;
+  text-align: center;
+  font-size: 12px;
+  margin-top: 24px;
+}
+
+@media (max-width: 650px) {
+  .metro-grid { grid-template-columns: 1fr; }
+  .metro-header { flex-wrap: wrap; }
+  .metro-panel { padding: 18px; }
+}
+
   </style>
 </head>
 <body>
@@ -35,7 +172,7 @@
     <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="8" width="38" height="32" rx="5"/><circle cx="17" cy="19" r="3"/><path d="m9 35 11-11 7 7 6-6 7 9"/></svg>
     <div><div class="title">Strava</div><div class="subtitle">Mes statistiques sportives</div></div>
   </a>
-  <a class="tile metro" data-shortcut="Metros" href="shortcuts://run-shortcut?name=M%C3%A9tros" aria-label="Lancer le raccourci Métros">
+  <a class="tile metro" href="#metros" id="open-metros" aria-label="Afficher les prochains métros">
     <span class="shine"></span>
     <svg class="icon" viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="4" width="28" height="32" rx="7"/><path d="M10 14h28M15 36l-5 8m23-8 5 8M16 29h4m8 0h4"/><path d="M17 9h14"/></svg>
     <div><div class="title">Métros</div><div class="subtitle">Prochains passages</div></div>
@@ -51,12 +188,201 @@
     <div><div class="title">PlayStation</div><div class="subtitle">Allumer le PC gaming</div></div>
   </a>
 </main>
+  
+<section id="metro-page" hidden>
+  <header class="metro-header">
+    <button id="metro-back" type="button">
+      ← Retour
+    </button>
+    <h1>Prochains métros</h1>
+    <span id="metro-updated">Temps réel</span>
+  </header>
+
+  <div class="metro-grid">
+    <article class="metro-panel">
+      <div class="metro-station">
+        <span class="metro-line line8">8</span>
+        <h2>La Motte-Picquet – Grenelle</h2>
+      </div>
+      <div id="departures-8">
+        Chargement des horaires…
+      </div>
+    </article>
+
+    <article class="metro-panel">
+      <div class="metro-station">
+        <span class="metro-line line10">10</span>
+        <h2>Charles Michels</h2>
+      </div>
+      <div id="departures-10">
+        Chargement des horaires…
+      </div>
+    </article>
+  </div>
+
+  <p class="metro-source">
+    Données : Île-de-France Mobilités · PRIM
+  </p>
+</section>
+
 <script>
   // Les noms ci-dessous doivent correspondre EXACTEMENT aux raccourcis de l'iPad.
   // Le schéma d'URL shortcuts:// est officiellement documenté par Apple.
   document.querySelectorAll('[data-shortcut]').forEach(tile => {
     tile.href = 'shortcuts://run-shortcut?name=' + encodeURIComponent(tile.dataset.shortcut);
   });
+</script>
+
+<script>
+const METRO_API = "https://metro-dashboard.hugo-brucker.workers.dev/metros";
+
+const metroPage = document.getElementById("metro-page");
+const dashboard = document.querySelector("main");
+let metroData = null;
+let lastFetch = 0;
+
+const directions = {
+  "8": [
+    ["Créteil – Pointe du Lac", /cr[eé]teil/i],
+    ["Balard", /balard/i]
+  ],
+  "10": [
+    ["Gare d'Austerlitz", /austerlitz/i],
+    ["Boulogne – Pont de Saint-Cloud", /boulogne/i]
+  ]
+};
+
+function makeElement(tag, className, text) {
+  const element = document.createElement(tag);
+  element.className = className;
+  element.textContent = text;
+  return element;
+}
+
+function renderMetros() {
+  if (!metroData) return;
+
+  for (const line of ["8", "10"]) {
+    const container =
+      document.getElementById("departures-" + line);
+
+    container.replaceChildren();
+    const entries = metroData.lines[line] || [];
+
+    for (const [label, matcher] of directions[line]) {
+      const section = makeElement(
+        "div", "metro-direction", ""
+      );
+
+      section.appendChild(
+        makeElement("h3", "", "Direction " + label)
+      );
+
+      const times = makeElement("div", "metro-times", "");
+      const departures = entries
+        .filter(item => matcher.test(item.destination))
+        .map(item =>
+          Math.ceil((Date.parse(item.time) - Date.now()) / 60000)
+        )
+        .filter(minutes => Number.isFinite(minutes) && minutes >= 0)
+        .sort((a, b) => a - b)
+        .slice(0, 3);
+
+      if (!departures.length) {
+        times.appendChild(
+          makeElement("span", "metro-empty", "Aucun horaire disponible")
+        );
+      } else {
+        for (const minutes of departures) {
+          times.appendChild(
+            makeElement(
+              "span",
+              "metro-time",
+              minutes === 0 ? "À quai" : minutes + " min"
+            )
+          );
+        }
+      }
+
+      section.appendChild(times);
+      container.appendChild(section);
+    }
+  }
+
+  document.getElementById("metro-updated").textContent =
+    "Actualisé à " +
+    new Date(metroData.updatedAt).toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+}
+
+async function refreshMetros(force = false) {
+  if (
+    !force &&
+    metroData &&
+    Date.now() - lastFetch < 300000
+  ) {
+    renderMetros();
+    return;
+  }
+
+  try {
+    const response = await fetch(METRO_API, {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    metroData = await response.json();
+    lastFetch = Date.now();
+    renderMetros();
+  } catch (error) {
+    if (metroData) {
+      renderMetros();
+      document.getElementById("metro-updated").textContent =
+        "Dernières données disponibles";
+    } else {
+      for (const line of ["8", "10"]) {
+        document.getElementById(
+          "departures-" + line
+        ).textContent = "Horaires indisponibles";
+      }
+      document.getElementById("metro-updated").textContent =
+        "Connexion impossible";
+    }
+    console.error("Erreur Métros :", error);
+  }
+}
+
+document.getElementById("open-metros")
+  .addEventListener("click", event => {
+    event.preventDefault();
+    dashboard.hidden = true;
+    metroPage.hidden = false;
+    refreshMetros();
+  });
+
+document.getElementById("metro-back")
+  .addEventListener("click", () => {
+    metroPage.hidden = true;
+    dashboard.hidden = false;
+  });
+
+// Les temps restants diminuent chaque minute.
+// Les données API sont renouvelées toutes les 5 minutes.
+setInterval(() => {
+  if (metroPage.hidden || document.hidden) return;
+  refreshMetros();
+}, 60000);
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && !metroPage.hidden) {
+    refreshMetros();
+  }
+});
 </script>
 </body>
 </html>
